@@ -1,6 +1,8 @@
 <?php
 // Functie: classdefinitie User 
 // Auteur: Studentnaam
+require_once "User.php";
+
 
 class User {
 
