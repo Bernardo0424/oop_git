@@ -1,21 +1,20 @@
 <?php
-require_once "User.php"; // include de class
+require_once "classes/User.php";
 
 session_start();
 
 $errors = [];
 
-// Als het formulier is verstuurd
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user = new User();
     $user->username = $_POST["username"] ?? "";
     $user->setPassword($_POST["password"] ?? "");
 
-    // ✅ Validatie uitvoeren
+    // Validatie uitvoeren
     $errors = $user->validateLogin();
 
     if (empty($errors)) {
-        // Als er geen errors zijn → inloggen
+        // Simpele login (later kan dit met DB)
         if ($user->loginUser()) {
             $_SESSION["username"] = $user->username;
             header("Location: index_test.php");
@@ -26,7 +25,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -37,7 +35,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <h2>Login</h2>
 
     <?php
-    // Toon eventuele errors
     if (!empty($errors)) {
         echo "<ul style='color:red;'>";
         foreach ($errors as $error) {
