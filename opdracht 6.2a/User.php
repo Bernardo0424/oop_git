@@ -2,9 +2,13 @@
 class User {
     private PDO $conn;
     public ?string $username = null;
-    private ?string $password = null; // gebruikt voor opslag (hashed)
+    private ?string $password = null;
 
     public function __construct() {
+        $this->dbConnect();
+    }
+
+    private function dbConnect(): void {
         $host = 'localhost';
         $dbname = 'loginsysteem';
         $user = 'root';
@@ -18,12 +22,10 @@ class User {
         }
     }
 
-    // Voor registratie: zet en hash het wachtwoord
     public function setPassword(string $password): void {
         $this->password = password_hash($password, PASSWORD_DEFAULT);
     }
 
-    // Registreren
     public function registerUser(): array {
         if (empty($this->username) || empty($this->password)) {
             return ["Gebruikersnaam of wachtwoord niet ingesteld."];
@@ -49,7 +51,6 @@ class User {
         }
     }
 
-    // Inloggen: accepteert plain wachtwoord en verifieert tegen DB-hash
     public function loginUser(string $username, string $plainPassword): bool {
         try {
             $stmt = $this->conn->prepare("SELECT * FROM users WHERE username = :username");
@@ -57,7 +58,6 @@ class User {
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($user && password_verify($plainPassword, $user['password'])) {
-                // succesvolle login
                 $_SESSION['username'] = $user['username'];
                 $this->username = $user['username'];
                 return true;
@@ -65,7 +65,6 @@ class User {
 
             return false;
         } catch (PDOException $e) {
-            // optioneel: log de fout ergens
             return false;
         }
     }
@@ -74,7 +73,6 @@ class User {
         return !empty($_SESSION['username']);
     }
 
-    // Haal gebruiker op en zet $this->username
     public function getUser(string $username): ?array {
         $stmt = $this->conn->prepare("SELECT * FROM users WHERE username = :username");
         $stmt->execute([':username' => $username]);

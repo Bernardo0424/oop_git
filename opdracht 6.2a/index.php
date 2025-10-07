@@ -1,7 +1,5 @@
 <?php
-// Functie: programma login OOP 
-// Auteur: Studentnaam
-
+// Homepagina
 session_start();
 require_once 'User.php';
 
@@ -14,34 +12,22 @@ $user = new User();
     <title>Home</title>
 </head>
 <body>
-    <h3>PDO Login and Registration</h3>
+    <h3>PDO Login en Registratie</h3>
     <hr/>
 
-    <h3>Welkom op de HOME-pagina!</h3>
-    <br />
+    <?php if (!$user->isLoggedin()): ?>
+        <p>U bent niet ingelogd. Log in om verder te gaan.</p>
+        <a href="login_form.php">Login</a>
+    <?php else: ?>
+        <?php 
+            $user->getUser($_SESSION['username']);
+        ?>
+        <h2>Welkom, <?php $user->showUser(); ?>!</h2>
+        <p>Je bent succesvol ingelogd.</p>
+        <a href="logout.php">Uitloggen</a>
+    <?php endif; ?>
 
-    <?php
-    // Check login session
-    if (!$user->isLoggedin()) {
-        echo "U bent niet ingelogd. Log in om verder te gaan.<br><br>";
-        echo '<a href="login_form.php">Login</a>';
-    } else {
-        // select userdata from database
-        $user->getUser($_SESSION['username'] ?? $user->username);
-
-        // Print userdata
-        echo "<h2>Het spel kan beginnen</h2>";
-        echo "Je bent ingelogd met:<br/>";
-        $user->showUser();
-        echo "<br><br>";
-        echo '<a href="logout.php">Logout</a>';
-    }
-	
-// Simpele homepage
-
-echo "<p><a href='register_form.php'>Register</a></p>";
-?>
-
-    
+    <br><br>
+    <p><a href="register_form.php">Registreren</a></p>
 </body>
 </html>

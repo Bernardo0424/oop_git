@@ -1,11 +1,7 @@
 <?php
 session_start();
+require_once 'User.php';
 
-// Alle sessie data verwijderen
-$_SESSION = [];
-session_unset();
-session_destroy();
-
-// Redirect terug naar login
+$user = new User();
+$user->logout();
 header("Location: login_form.php");
-exit;
